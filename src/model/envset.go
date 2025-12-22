@@ -14,8 +14,8 @@ type envset struct {
 
 	CreatedAt time.Time `bson:"created_at"`
 	UpdatedAt time.Time `bson:"updated_at"`
-	hash string `bson:"hash"`
-	
+	Hash string `bson:"hash"`
+
 }
 
 
