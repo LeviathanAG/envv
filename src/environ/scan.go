@@ -88,7 +88,7 @@ func ScanRepo(repoRoot string, repoID string) ([]model.EnvSet, error) {
 	return results, nil
 }
 
-// parse the env file at given path into a map of key value pairs
+// parse the env file at given path into a hashset of key value pairs
 func parseEnvFile(path string) (map[string]string, error) {
 	f, err := os.Open(path)
 	if err != nil {
