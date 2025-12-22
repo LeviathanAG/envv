@@ -2,17 +2,23 @@ package environ
 
 import (
 	"bufio"
+	"context"
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"envv/src/model"
+
+	"golang.org/x/sync/errgroup"
 )
 
 // ScanRepo walks the repo tree starting at repoRoot,
-
 func ScanRepo(repoRoot string, repoID string) ([]model.EnvSet, error) {
 	var results []model.EnvSet
+	var mu sync.Mutex
+
+	g, _ := errgroup.WithContext(context.Background())
 
 	err := filepath.WalkDir(repoRoot, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
@@ -29,40 +35,57 @@ func ScanRepo(repoRoot string, repoID string) ([]model.EnvSet, error) {
 			return nil
 		}
 
-		// Parse env vars from file
-		vars, err := parseEnvFile(path)
-		if err != nil {
-			return err
-		}
+		// Launch a goroutine for each file
+		g.Go(func() error {
+			// Parse env vars from file
+			vars, err := parseEnvFile(path)
+			if err != nil {
+				return err
+			}
 
-		// Determine env path relative to repo root
-		relDir, err := filepath.Rel(repoRoot, filepath.Dir(path))
-		if err != nil {
-			return err
-		}
+			// Determine env path relative to repo root
+			relDir, err := filepath.Rel(repoRoot, filepath.Dir(path))
+			if err != nil {
+				return err
+			}
 
-		// Normalize root env path
-		if relDir == "." {
-			relDir = "."
-		}
+			// Normalize root env path
+			if relDir == "." {
+				relDir = "."
+			}
 
-		// Compute hash for env doc
-		hash := HashEnvSet(relDir, vars)
+			// Compute hash for env doc
+			hash := HashEnvSet(relDir, vars)
 
-		env := model.EnvSet{
-			RepoID:   repoID,
-			RepoPath: repoRoot,
-			EnvName:  envNameFromPath(relDir),
-			EnvPath:  relDir,
-			Vars:     vars,
-			Hash:     hash,
-		}
+			env := model.EnvSet{
+				RepoID:   repoID,
+				RepoPath: repoRoot,
+				EnvName:  envNameFromPath(relDir),
+				EnvPath:  relDir,
+				Vars:     vars,
+				Hash:     hash,
+			}
 
-		results = append(results, env)
+			mu.Lock()
+			results = append(results, env)
+			mu.Unlock()
+
+			return nil
+		})
+
 		return nil
 	})
 
-	return results, err
+	if err != nil {
+		return nil, err
+	}
+
+	// Wait for all goroutines to complete hopefully it works
+	if err := g.Wait(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }
 
 // parse the env file at given path into a map of key value pairs

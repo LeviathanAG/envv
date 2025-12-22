@@ -2,9 +2,9 @@
 
 (First GO project after learning GO for 3 weeks after endsems.)
 
-In my internship everyone keeps begging for env and reply comes late sometimes from people so I figured i might as well make an open source CLI tool just for the sake of it.
+In my internship everyone begs for env and reply comes late sometimes from people which is annoying asl so I figured i might as well make an open source CLI tool just for the sake of it.
 
-idc if people use it or not tbh 
+idc if people use it or not tbh.
 
 i named it envv since its similar to git
 
