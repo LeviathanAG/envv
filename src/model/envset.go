@@ -2,20 +2,17 @@ package model
 
 import "time"
 
-type envset struct {
-	ID 	  string    `bson:"_id,omitempty"`
-	REPOID string   `bson:"repo_id"`
-	
-	Env_parent_folder_name string `bson:"env_parent_folder_name"`
-	Envpath string `bson:"envpath"`
-
-
-	vars map[string]string `bson:"vars"`
-
-	CreatedAt time.Time `bson:"created_at"`
-	UpdatedAt time.Time `bson:"updated_at"`
-	Hash string `bson:"hash"`
-
+type EnvSet struct {
+	ID                     string            `bson:"_id,omitempty"`
+	RepoID                 string            `bson:"repo_id"`
+	RepoPath               string            `bson:"repo_path"`
+	Env_parent_folder_name string            `bson:"env_parent_folder_name"`
+	EnvName                string            `bson:"env_name"`
+	EnvPath                string            `bson:"env_path"`
+	Vars                   map[string]string `bson:"vars"`
+	CreatedAt              time.Time         `bson:"created_at"`
+	UpdatedAt              time.Time         `bson:"updated_at"`
+	Hash                   string            `bson:"hash"`
 }
 
 

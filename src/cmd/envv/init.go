@@ -1,4 +1,4 @@
-package envv
+package main
 
 import (
 	"context"

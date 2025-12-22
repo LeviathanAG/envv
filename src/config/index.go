@@ -4,18 +4,19 @@ import "os"
 import "errors"
 import "fmt"
 import "github.com/joho/godotenv"
+import "sync"
 
 
-type config struct {
+type Config struct {
     MongoURI string
 }
 
 var (
-	cfg  *config
+	cfg  *Config
 	once sync.Once
 )
 
-func load() error {
+func Load() error {
     var err error
     once.Do(func(){
         _ = godotenv.Load()
@@ -25,7 +26,7 @@ func load() error {
             return
         }
         fmt.Println("MONGO_URI:", mongoURI)
-        cfg = &config{
+        cfg = &Config{
             MongoURI: mongoURI,
         }
 
@@ -35,7 +36,7 @@ func load() error {
 
 }
 
-func Get() config {
+func Get() Config {
 	if cfg == nil {
 		panic("config not loaded: call config.Load() first")
 	}

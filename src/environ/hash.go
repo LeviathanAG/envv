@@ -26,3 +26,10 @@ func HashEnvSet(envPath string, vars map[string]string) string {
 
 	return hex.EncodeToString(h.Sum(nil))
 }
+
+// HashRepoID computes a unique ID for a repo based on its absolute root path
+func HashRepoID(path string) string {
+	h := sha256.New()
+	h.Write([]byte(path))
+	return hex.EncodeToString(h.Sum(nil))
+}
