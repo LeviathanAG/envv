@@ -1,8 +1,8 @@
-package main
+package envv
 
 import "os"
 
-func main() {
+func RunMain() {
 	if err := Execute(); err != nil {
 		os.Exit(1)
 	}

@@ -37,3 +37,5 @@ func New(mongoURI string) (*Store, error) {
 func (s *Store) Close(ctx context.Context) error {
 	return s.Client.Disconnect(ctx)
 }
+
+

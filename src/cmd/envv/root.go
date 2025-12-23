@@ -1,4 +1,4 @@
-package main
+package envv
 
 import "github.com/spf13/cobra"
 

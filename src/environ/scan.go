@@ -10,6 +10,7 @@ import (
 
 	"envv/src/model"
 
+	"fmt"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -25,8 +26,12 @@ func ScanRepo(repoRoot string, repoID string) ([]model.EnvSet, error) {
 			return err
 		}
 
-		// skip dir
+		// skip heavy directories to prevent infinite scanning/hanging
 		if d.IsDir() {
+			dirName := d.Name()
+			if dirName == ".git" || dirName == "node_modules" || dirName == "vendor" || dirName == "dist" {
+				return filepath.SkipDir
+			}
 			return nil
 		}
 
@@ -34,6 +39,8 @@ func ScanRepo(repoRoot string, repoID string) ([]model.EnvSet, error) {
 		if d.Name() != ".env" {
 			return nil
 		}
+
+		fmt.Printf("  Scanning: %s\n", path)
 
 		// Launch a goroutine for each file
 		g.Go(func() error {

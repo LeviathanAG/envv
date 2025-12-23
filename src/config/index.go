@@ -2,7 +2,7 @@ package config
 
 import "os"
 import "errors"
-import "fmt"
+// import "fmt"
 import "github.com/joho/godotenv"
 import "sync"
 
@@ -25,7 +25,7 @@ func Load() error {
             err = errors.New("MONGO_URI not set. Set the variable in .env")
             return
         }
-        fmt.Println("MONGO_URI:", mongoURI)
+
         cfg = &Config{
             MongoURI: mongoURI,
         }
